@@ -1,72 +1,117 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../Theam/theme.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:provider/provider.dart';
+
+import '../Theam/theme.dart';
 import '../widget/profile_field.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
-
-  @override
-  _ProfilePageState createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
+class ProfilePageModel extends ChangeNotifier {
   final User? user = FirebaseAuth.instance.currentUser;
   final CollectionReference usersCollection =
-      FirebaseFirestore.instance.collection('User');
+  FirebaseFirestore.instance.collection('User');
 
-  String? profileImageUrl;
+  String? _profileImageUrl;
+  Map<String, dynamic>? _userData; // Store user data locally
 
-  @override
-  void initState() {
-    super.initState();
-    fetchProfileImageUrl();
+  String? get profileImageUrl => _profileImageUrl;
+
+  ProfilePageModel() {
+    fetchUserData(); // Fetch user data initially
   }
 
-  Future<void> fetchProfileImageUrl() async {
+  Future<void> fetchUserData() async {
     final docSnapshot = await usersCollection.doc(user?.uid).get();
-    final userData = docSnapshot.data() as Map<String, dynamic>?;
+    _userData = docSnapshot.data() as Map<String, dynamic>?;
 
-    setState(() {
-      profileImageUrl = userData?['profileImageUrl'];
-    });
+    _profileImageUrl = _userData?['profileImageUrl'];
+    notifyListeners();
   }
 
   Future<void> updateProfileField(String field, String value) async {
     try {
       await usersCollection.doc(user?.uid).update({field: value});
+      // Update local user data
+      _userData?[field] = value;
+      notifyListeners(); // Notify UI of changes
     } catch (e) {
-      print("Error updating $field: $e");
+      print('Error updating profile field: $e');
     }
   }
 
+  Future<void> uploadImage(File imageFile) async {
+    if (imageFile != null) {
+      var storageInstance = FirebaseStorage.instance;
+
+      try {
+        var ref = await storageInstance
+            .ref()
+            .child("profile${user?.uid}/${imageFile.path.split('/').last}")
+            .putFile(imageFile);
+
+        var imageUrl = await ref.ref.getDownloadURL();
+        await usersCollection
+            .doc(user?.uid)
+            .update({'profileImageUrl': imageUrl});
+        _profileImageUrl = imageUrl;
+        notifyListeners();
+      } catch (e) {
+        print('Error uploading image: $e');
+      }
+    }
+  }
+}
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({Key? key});
+
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => ProfilePageModel(),
+      child: _ProfilePageContent(),
+    );
+  }
+}
+
+class _ProfilePageContent extends StatefulWidget {
+  @override
+  _ProfilePageContentState createState() => _ProfilePageContentState();
+}
+
+class _ProfilePageContentState extends State<_ProfilePageContent> {
+  final _imagePicker = ImagePicker();
+
+  @override
+  Widget build(BuildContext context) {
+    final model = Provider.of<ProfilePageModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppThemeData.backgroundBlack,
         title: const Text(
           "Profile",
           style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppThemeData.primaryColor),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppThemeData.primaryColor,
+          ),
         ),
       ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
-        reverse: true,
         child: Padding(
           padding: const EdgeInsets.only(left: 11, right: 10),
           child: Padding(
             padding: const EdgeInsets.only(left: 10.0, right: 10),
             child: Container(
               padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom),
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
               child: Column(
                 children: [
                   const SizedBox(
@@ -78,8 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 70,
-                          backgroundImage: profileImageUrl != null
-                              ? NetworkImage(profileImageUrl!)
+                          backgroundImage: model.profileImageUrl != null
+                              ? NetworkImage(model.profileImageUrl!)
                               : null,
                         ),
                       ),
@@ -88,11 +133,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         right: 0,
                         child: IconButton(
                           onPressed: () async {
-                            var img = await ImagePicker()
-                                .pickImage(source: ImageSource.gallery);
+                            var img = await _imagePicker.pickImage(
+                                source: ImageSource.gallery);
                             if (img != null) {
                               File imageFile = File(img.path);
-                              uploadImage(imageFile);
+                              model.uploadImage(imageFile);
                             }
                           },
                           icon: const Icon(Icons.camera),
@@ -104,18 +149,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: 40,
                   ),
                   FutureBuilder<DocumentSnapshot>(
-                    future: usersCollection.doc(user?.uid).get(),
+                    future: model.usersCollection.doc(model.user?.uid).get(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         Map<String, dynamic>? userData =
-                            snapshot.data?.data() as Map<String, dynamic>?;
+                        snapshot.data?.data() as Map<String, dynamic>?;
                         return Column(
                           children: [
                             ProfileField(
                               label: "Name",
                               value: userData?['name'],
                               onEdit: (newValue) {
-                                updateProfileField('name', newValue);
+                                model.updateProfileField('name', newValue);
                               },
                             ),
                             ProfileField(
@@ -127,45 +172,44 @@ class _ProfilePageState extends State<ProfilePage> {
                               label: "Age",
                               value: userData?['age'],
                               onEdit: (newValue) {
-                                updateProfileField('age', newValue);
+                                model.updateProfileField('age', newValue);
                               },
                             ),
                             ProfileField(
                               label: "Place",
                               value: userData?['place'],
                               onEdit: (newValue) {
-                                updateProfileField('place', newValue);
+                                model.updateProfileField('place', newValue);
                               },
                             ),
                             ProfileField(
                               label: "Gender",
                               value: userData?['gender'],
                               onEdit: (newValue) {
-                                updateProfileField('gender', newValue);
+                                model.updateProfileField('gender', newValue);
                               },
                             ),
                             ProfileField(
                               label: "Blood Group",
                               value: userData?['blood'],
                               onEdit: (newValue) {
-                                updateProfileField('blood', newValue);
+                                model.updateProfileField('blood', newValue);
                               },
                             ),
                             ProfileField(
                               label: "Size",
                               value: userData?['size'],
                               onEdit: (newValue) {
-                                updateProfileField('size', newValue);
+                                model.updateProfileField('size', newValue);
                               },
                             ),
                             ProfileField(
                               label: "Phone",
                               value: userData?['phone'],
                               onEdit: (newValue) {
-                                updateProfileField('phone', newValue);
+                                model.updateProfileField('phone', newValue);
                               },
                             ),
-                            // Add other ProfileField widgets similarly for other fields
                           ],
                         );
                       } else if (snapshot.hasError) {
@@ -185,26 +229,5 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
-  }
-
-  Future<void> uploadImage(File imageFile) async {
-    if (imageFile != null) {
-      var storageInstance = FirebaseStorage.instance;
-
-      try {
-        var ref = await storageInstance
-            .ref()
-            .child("profile${imageFile.path}")
-            .putFile(imageFile);
-
-        var imageUrl = await ref.ref.getDownloadURL();
-        usersCollection.doc(user?.uid).update({'profileImageUrl': imageUrl});
-        setState(() {
-          profileImageUrl = imageUrl;
-        });
-      } catch (e) {
-        print("Error uploading image: $e");
-      }
-    }
   }
 }

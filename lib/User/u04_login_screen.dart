@@ -81,7 +81,6 @@ class LoginPage extends StatelessWidget {
                               builder: (context) => const NavigationBar123(),
                             ));
                       } catch (e) {
-                        print(e);
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text('Invalid email or password')));
                       }
@@ -118,7 +117,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 100,),
+                const SizedBox(height: 100,),
 
                 TextButton(
                   onPressed: () {

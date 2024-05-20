@@ -11,13 +11,14 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(backgroundColor:AppThemeData.backgroundBlack,
+    return Drawer(
+      backgroundColor: AppThemeData.backgroundBlack,
       child: ListView(
         padding: EdgeInsets.zero,
-        children: <Widget>[const
-          SizedBox(
+        children: <Widget>[
+          const SizedBox(
             height: 150,
-      child:  DrawerHeader(
+            child: DrawerHeader(
               decoration: BoxDecoration(
                 color: AppThemeData.primaryColor,
               ),
@@ -31,18 +32,24 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Appointments',style: TextStyle(color: AppThemeData.primaryColor,fontSize: 22),),
+            title: const Text(
+              'Appointments',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyAppointments(),
+                  builder: (context) =>  AppointmentDetailsPage(),
                 ),
               );
             },
           ),
           ListTile(
-            title: const Text('Previous Prescriptions',style: TextStyle(color:AppThemeData.primaryColor,fontSize: 22),),
+            title: const Text(
+              'Previous Prescriptions',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -53,7 +60,10 @@ class CustomDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('My Profile',style: TextStyle(color: AppThemeData.primaryColor,fontSize: 22),),
+            title: const Text(
+              'My Profile',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -64,25 +74,31 @@ class CustomDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('Support',style: TextStyle(color:AppThemeData.primaryColor,fontSize: 22),),
-            onTap: () {
-            },
+            title: const Text(
+              'Support',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
+            onTap: () {},
           ),
           ListTile(
-            title: const Text('WhatsApp Support',style: TextStyle(color: AppThemeData.primaryColor,fontSize: 22),),
+            title: const Text(
+              'WhatsApp Support',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WhatsappSupport(
-                  ),
+                  builder: (context) => WhatsappSupport(),
                 ),
               );
-
             },
           ),
           ListTile(
-            title: const Text('About',style: TextStyle(color: AppThemeData.primaryColor,fontSize: 22),),
+            title: const Text(
+              'About',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
             onTap: () {
               Navigator.push(
                 context,

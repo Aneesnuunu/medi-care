@@ -1,22 +1,14 @@
-
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import '../Theam/theme.dart';
-class MyAppointments extends StatefulWidget {
-  final DateTime? selectedDate;
-  final String? selectedTime;
 
-  const MyAppointments({Key? key, this.selectedDate, this.selectedTime})
-      : super(key: key);
 
-  @override
-  State<MyAppointments> createState() => _MyAppointmentsState();
-}
+class AppointmentDetailsPage extends StatelessWidget {
+  const AppointmentDetailsPage({super.key});
 
-class _MyAppointmentsState extends State<MyAppointments> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,36 +16,36 @@ class _MyAppointmentsState extends State<MyAppointments> {
         title: const Text(
           "Appointments",
           style: TextStyle(
-              color: AppThemeData.primaryColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold),
+            color: AppThemeData.primaryColor,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
-      body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
             .collection('User')
             .doc(FirebaseAuth.instance.currentUser?.uid)
-            .get(),
-        builder: (context, snapshot) {
+            .collection('appointments')
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
-            var appointments = snapshot.data?.get('appointments') ?? [];
-            // Sort appointments by date and time
-            appointments.sort((a, b) {
-              DateFormat dateFormat = DateFormat('yyyy-MM-dd hh:mm a');
-              DateTime dateTimeA = dateFormat.parse(
-                  '${a['date']} ${a['time']}');
-              DateTime dateTimeB = dateFormat.parse(
-                  '${b['date']} ${b['time']}');
-              return dateTimeA.compareTo(dateTimeB);
-            });
+            final appointments = snapshot.data!.docs;
             return ListView.builder(
               itemCount: appointments.length,
               itemBuilder: (context, index) {
-                var appointment = appointments[index];
+                final appointment = appointments[index];
+                final appointmentData =
+                appointment.data() as Map<String, dynamic>;
+                final appointmentId = appointment.id; // Get the appointment ID
+                final date = appointmentData['date'];
+                final dayName = appointmentData['dayName'];
+                final time = appointmentData['time'];
+
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Card(
@@ -62,50 +54,106 @@ class _MyAppointmentsState extends State<MyAppointments> {
                     ),
                     color: AppThemeData.primaryColor,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
-                          leading: Icon(Icons.event, color: Colors.white),
+                          leading: const Icon(Icons.event, color: Colors.white),
                           title: Text(
-                            DateFormat('yyyy-MM-dd').format(DateTime.parse(appointment['date'])),
-                            style: TextStyle(color: Colors.white),
+                            '${DateFormat('yyyy-MM-dd').format(DateTime.parse(date))}',
+                            style: const TextStyle(color: Colors.white),
                           ),
-                          subtitle: Text(
-                            appointment['dayName'],
-                            style: TextStyle(color: Colors.white),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '$dayName',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
                           trailing: Text(
-                            appointment['time'],
-                            style: TextStyle(color: Colors.white),
+                            '$time',
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          onTap: () {
+                            // Handle onTap event if needed
+                          },
+                        ),
+                        Text(
+                          '$appointmentId',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            // Delete the appointment from the database
-                            FirebaseFirestore.instance
-                                .collection('User')
-                                .doc(FirebaseAuth.instance.currentUser?.uid)
-                                .update({
-                              'appointments':
-                              FieldValue.arrayRemove([appointment]),
-                            }).then((value) {
-                              print('Appointment deleted successfully');
-                              setState(() {
-                                appointments.removeAt(index);
-                              });
-                            }).catchError((error) {
-                              print('Failed to delete appointment: $error');
-                            });
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent),
-                          child: Text(
-                            'Cancel Appointment',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity, // Set width to match parent
+                          child: ElevatedButton(
+                            onPressed: () {
+                              // Show confirmation dialog
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    backgroundColor: AppThemeData.backgroundBlack,
+                                    title: const Text('Confirm Cancellation',style: TextStyle(color: Colors.white),),
+                                    content: const Text('Are you sure you want to cancel this appointment?',style: TextStyle(color: Colors.white),),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('No',style: TextStyle(color:AppThemeData.primaryColor),),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          // Delete the appointment
+                                          FirebaseFirestore.instance
+                                              .collection('User')
+                                              .doc(FirebaseAuth.instance.currentUser?.uid)
+                                              .collection('appointments')
+                                              .doc(appointment.id)
+                                              .delete()
+                                              .then((value) {
+                                            // Update UI by removing the appointment from the list
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              const SnackBar(
+                                                content: Text('Appointment canceled successfully'),
+                                              ),
+                                            );
+                                          }).catchError((error) {
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Failed to cancel appointment: $error'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Yes'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            child: const Text(
+                              'Cancel Appointment',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -120,5 +168,3 @@ class _MyAppointmentsState extends State<MyAppointments> {
     );
   }
 }
-
-

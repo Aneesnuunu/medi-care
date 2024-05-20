@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../Model/d_main_model.dart';
 import '../Theam/theme.dart';
 import '../User/u07_calender.dart';
 import 'd1_home.dart';
 import 'd4_profile.dart';
 
-class DoctorNavigationBar extends StatefulWidget {
-  const DoctorNavigationBar({super.key});
-
-
-
-  @override
-  _DoctorNavigationBar createState() => _DoctorNavigationBar();
-}
-
-class _DoctorNavigationBar extends State<DoctorNavigationBar> {
-  int _selectedIndex = 0;
+class DoctorNavigationBar extends StatelessWidget {
+  const DoctorNavigationBar({Key? key}) : super(key: key);
 
   static final List<Widget> _widgetOptions = [
     const DoctorHomePage(),
@@ -23,34 +16,42 @@ class _DoctorNavigationBar extends State<DoctorNavigationBar> {
     const DoctorProfilePage(),
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(backgroundColor: AppThemeData.primaryColor,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: 'Calender',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.white,
-        onTap: _onItemTapped,
+    return ChangeNotifierProvider(
+      create: (_) => NavigationModel(),
+      child: Scaffold(
+        body: Consumer<NavigationModel>(
+          builder: (context, navigationModel, child) {
+            return _widgetOptions.elementAt(navigationModel.selectedIndex);
+          },
+        ),
+        bottomNavigationBar: Consumer<NavigationModel>(
+          builder: (context, navigationModel, child) {
+            return BottomNavigationBar(
+              backgroundColor: AppThemeData.primaryColor,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.calendar_month),
+                  label: 'Calendar',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
+              ],
+              currentIndex: navigationModel.selectedIndex,
+              selectedItemColor: Colors.white,
+              onTap: (index) {
+                navigationModel.setSelectedIndex(index);
+              },
+            );
+          },
+        ),
       ),
     );
   }
