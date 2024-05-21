@@ -47,6 +47,7 @@ class DoctorHomePage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
+
                 MaterialPageRoute(builder: (context) => DoctorAppointmentsPage(context: context,)),
               );
             },
@@ -68,11 +69,11 @@ class DoctorHomePage extends StatelessWidget {
             ),
             tileColor: AppThemeData.primaryColor,
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => NextDayAppointments()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TomorrowAppointmentsPage(context: context,)),
+              );
             },
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
@@ -92,11 +93,11 @@ class DoctorHomePage extends StatelessWidget {
             ),
             tileColor: AppThemeData.primaryColor,
             onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => DayAfterTomorrowAppointments()),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DayAfterTomorrowAppointmentsPage(context: context,)),
+              );
             },
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),

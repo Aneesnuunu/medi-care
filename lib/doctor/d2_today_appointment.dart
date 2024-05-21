@@ -183,9 +183,12 @@ class DoctorAppointmentsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime currentDate = DateTime.now();
+    String formattedCurrentDate = currentDate.toIso8601String().split('T')[0];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "My Appointments",
           style: TextStyle(
             color: AppThemeData.primaryColor,
@@ -198,7 +201,7 @@ class DoctorAppointmentsPage extends StatelessWidget {
         stream: FirebaseFirestore.instance.collection('User').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -228,28 +231,36 @@ class DoctorAppointmentsPage extends StatelessWidget {
                 final blood = userData?['blood'] ?? '';
                 final size = userData?['size'] ?? '';
 
-                final appointments =
-                user.reference.collection('appointments').snapshots();
+                final appointments = user.reference
+                    .collection('appointments')
+                    .where('date', isEqualTo: formattedCurrentDate)
+                    .snapshots();
 
-                return FutureBuilder<QuerySnapshot>(
-                  future: appointments.first,
+                return StreamBuilder<QuerySnapshot>(
+                  stream: appointments,
                   builder: (context, appointmentSnapshot) {
                     if (appointmentSnapshot.connectionState ==
                         ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     } else if (appointmentSnapshot.hasError) {
                       return Center(
                           child: Text('Error: ${appointmentSnapshot.error}'));
                     } else {
-                      final appointmentDocs = appointmentSnapshot.data!.docs;
+                      final appointmentDocs =
+                      appointmentSnapshot.data!.docs.toList();
+                      // Sort appointmentDocs by time
+                      appointmentDocs.sort((a, b) => (a['time'] as String)
+                          .compareTo(b['time'] as String));
+
                       return Column(
                         children: appointmentDocs.map((appointment) {
                           final appointmentData =
                           appointment.data() as Map<String, dynamic>;
                           final appointmentId = appointment.id;
-                          final date = appointmentData['date'] as String;
-                          final dayName = appointmentData['dayName'] as String;
-                          final time = appointmentData['time'] as String;
+                          final date = appointmentData['date'] as String?;
+                          final dayName =
+                          appointmentData['dayName'] as String?;
+                          final time = appointmentData['time'] as String?;
 
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -268,8 +279,9 @@ class DoctorAppointmentsPage extends StatelessWidget {
                                       gender: gender,
                                       blood: blood,
                                       size: size,
-                                      date: date,
+                                      date: date ?? '', // Provide a default value if date is null
                                       appointmentId: appointmentId,
+                                      userId: userId,
                                     ),
                                   ),
                                 );
@@ -284,26 +296,26 @@ class DoctorAppointmentsPage extends StatelessWidget {
                                       ListTile(
                                         leading: profileImageUrl.isNotEmpty
                                             ? CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              profileImageUrl),
+                                          backgroundImage:
+                                          NetworkImage(profileImageUrl),
                                         )
-                                            : CircleAvatar(), // Default avatar if no profile image
+                                            : const CircleAvatar(),
                                         title: Text(
                                           userName,
-                                          style: TextStyle(color: Colors.white),
+                                          style: const TextStyle(color: Colors.white),
                                         ),
                                         subtitle: Text(
                                           '$age',
-                                          style: TextStyle(color: Colors.white),
+                                          style: const TextStyle(color: Colors.white),
                                         ),
                                         trailing: Text(
-                                          time,
-                                          style: TextStyle(color: Colors.white),
+                                          time ?? '',
+                                          style: const TextStyle(color: Colors.white),
                                         ),
                                       ),
                                       Text(
                                         appointmentId,
-                                        style: TextStyle(color: Colors.white),
+                                        style: const TextStyle(color: Colors.white),
                                       ),
                                     ],
                                   )),

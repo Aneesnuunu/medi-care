@@ -197,7 +197,7 @@ class PatientProfilePage extends StatelessWidget {
   final String size;
   final String date;
   final String appointmentId; // Add appointmentId as a parameter
-
+  final String userId;
   PatientProfilePage({
     required this.userName,
     required this.age,
@@ -210,6 +210,7 @@ class PatientProfilePage extends StatelessWidget {
     required this.size,
     required this.date,
     required this.appointmentId, // Initialize appointmentId
+    required this.userId,
   });
 
   @override
@@ -307,6 +308,8 @@ class PatientProfilePage extends StatelessWidget {
                             place: place,
                             date: date,
                             appointmentId: appointmentId, // Pass appointment ID
+                            userId: userId,
+
                           ),
                         ),
                       );

@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'User/u04_login_screen.dart';
 import 'controller/auth_provider.dart';
 import 'Theam/theme.dart';
 import 'User/u01_splash_screen.dart';
+import 'doctor/d1.1_login.dart';
 import 'doctor/d4_profile.dart';
 import 'firebase_options.dart';
 
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: SplashScreen(), // SplashScreen will navigate based on login state
+        home: LoginPage(), // SplashScreen will navigate based on login state
       ),
     );
   }
