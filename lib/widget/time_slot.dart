@@ -4,7 +4,7 @@ import 'package:medi_care/Theam/theme.dart';
 class TimeSlot extends StatefulWidget {
   final void Function(String)? onTimeSelected;
 
-  const TimeSlot({Key? key, this.onTimeSelected}) : super(key: key);
+  const TimeSlot({super.key, this.onTimeSelected});
 
   @override
   State<TimeSlot> createState() => _TimeSlotState();

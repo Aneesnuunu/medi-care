@@ -59,82 +59,84 @@ class _BookAppointmentContentState extends State<_BookAppointmentContent> {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 30),
-              const Text(
-                "Select Date",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                  color: AppThemeData.primaryColor,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                const Text(
+                  "Select Date",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color: AppThemeData.primaryColor,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 40),
-              SelectDate(
-                onDateSelected: (date) {
-                  model.setDate(date);
-                },
-              ),
-              const SizedBox(height: 40),
-              const Text(
-                "Time Slot",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                  color: AppThemeData.primaryColor,
-                ),
-              ),
-              const SizedBox(height: 40),
-              TimeSlot(
-                onTimeSelected: (time) {
-                  model.setTime(time);
-                },
-              ),
-              const SizedBox(height: 40),
-              SizedBox(
-                height: 50,
-                width: MediaQuery.of(context).size.width,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (model.selectedDate != null && model.selectedTime != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PaymentPage(
-                            selectedDate: model.selectedDate,
-                            selectedTime: model.selectedTime,
-                          ),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please select both date and time.'),
-                        ),
-                      );
-                    }
+                const SizedBox(height: 30),
+                SelectDate(
+                  onDateSelected: (date) {
+                    model.setDate(date);
                   },
-                  style: ElevatedButton.styleFrom(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(11)),
-                    ),
-                    backgroundColor: AppThemeData.primaryColor,
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  "Time Slot",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    color: AppThemeData.primaryColor,
                   ),
-                  child: const Text(
-                    "Book Appointment",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                ),
+                const SizedBox(height: 30),
+                TimeSlot(
+                  onTimeSelected: (time) {
+                    model.setTime(time);
+                  },
+                ),
+                const SizedBox(height: 30),
+                SizedBox(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (model.selectedDate != null && model.selectedTime != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PaymentPage(
+                              selectedDate: model.selectedDate,
+                              selectedTime: model.selectedTime,
+                            ),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please select both date and time.'),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(11)),
+                      ),
+                      backgroundColor: AppThemeData.primaryColor,
+                    ),
+                    child: const Text(
+                      "Book Appointment",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
             },
           ),
         ),
-        drawer: const CustomDrawer(), // Add the custom drawer widget here
+        drawer: const CustomDrawer(userId:'',), // Add the custom drawer widget here
         body: SingleChildScrollView(
           child: Column(
             children: [

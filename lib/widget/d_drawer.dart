@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../Theam/theme.dart';
+import '../User/u04_login_screen.dart';
+import '../User/u14_about.dart';
+import '../doctor/d4_profile.dart';
 
 class DoctorDrawer extends StatelessWidget {
   @override
@@ -42,8 +46,12 @@ class DoctorDrawer extends StatelessWidget {
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
             ),
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to profile page or perform other actions
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>  const DoctorProfilePage(),
+                ),
+              );
             },
           ),
           ListTile(
@@ -53,8 +61,13 @@ class DoctorDrawer extends StatelessWidget {
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
             ),
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to settings page or perform other actions
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>  const AboutMePage(),
+                ),
+              );
             },
           ),
           ListTile(
@@ -63,9 +76,59 @@ class DoctorDrawer extends StatelessWidget {
               'Logout',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
             ),
+            onTap: ()  async {
+              final shouldLogout = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: AppThemeData.backgroundBlack,
+                    title: const Text('Logout Confirmation',style: TextStyle(color: Colors.white),),
+                    content: const Text('Are you sure you want to logout?',style: TextStyle(color: Colors.white),),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel',style: TextStyle(color: Colors.white),),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Logout',style: TextStyle(color: Colors.white),),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (shouldLogout == true) {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                      (route) => false,
+                );
+              }
+            },
+
+          ),
+          SizedBox(height: 50,)
+,
+          ListTile(
+            leading: Icon(Icons.event_busy_outlined),
+            title: Text(
+              'Take a Leave',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
             onTap: () {
-              Navigator.pop(context);
-              // Handle logout action
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>  const AboutMePage(),
+                ),
+              );
             },
           ),
         ],

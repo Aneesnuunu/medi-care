@@ -1,13 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../Theam/theme.dart';
+import '../User/u04_login_screen.dart';
 import '../User/u08_profile.dart';
 import '../User/u12_my_appointments.dart';
 import '../User/u13_my_prescriptions.dart';
 import '../User/u14_about.dart';
-import '../User/u15_whatsapp_support.dart';
+import '../User/u16_absent.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({super.key});
+  final String userId;
+
+  const CustomDrawer({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +36,7 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
+            leading: const Icon(Icons.task_alt),
             title: const Text(
               'Appointments',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
@@ -40,26 +45,43 @@ class CustomDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>  AppointmentDetailsPage(),
+                  builder: (context) => const AppointmentDetailsPage(),
                 ),
               );
             },
           ),
           ListTile(
+            leading: const Icon(Icons.history),
             title: const Text(
-              'Previous Prescriptions',
+              'History',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
             ),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const MyPrescriptions(),
+                  builder: (context) => const MyPrescription(),
                 ),
               );
             },
           ),
           ListTile(
+            leading: const Icon(Icons.event_busy),
+            title: const Text(
+              'Absent',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FailedAppointmentsPage(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
             title: const Text(
               'My Profile',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
@@ -74,6 +96,7 @@ class CustomDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: const Icon(Icons.contact_support_outlined),
             title: const Text(
               'Support',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
@@ -81,20 +104,7 @@ class CustomDrawer extends StatelessWidget {
             onTap: () {},
           ),
           ListTile(
-            title: const Text(
-              'WhatsApp Support',
-              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WhatsappSupport(),
-                ),
-              );
-            },
-          ),
-          ListTile(
+            leading: const Icon(Icons.info_outline),
             title: const Text(
               'About',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
@@ -108,7 +118,53 @@ class CustomDrawer extends StatelessWidget {
               );
             },
           ),
-          // Add more list tiles for additional items in the drawer
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text(
+              'Logout',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
+            onTap: () async {
+              final shouldLogout = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    backgroundColor: AppThemeData.backgroundBlack,
+                    title: const Text('Logout Confirmation',
+                        style: TextStyle(color: Colors.white)),
+                    content: const Text(
+                        'Are you sure you want to logout?',
+                        style: TextStyle(color: Colors.white)),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text('Cancel',
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
+                      TextButton(
+                        child: const Text('Logout',
+                            style: TextStyle(color: Colors.white)),
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (shouldLogout == true) {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  LoginPage()),
+                      (route) => false,
+                );
+              }
+            },
+          ),
         ],
       ),
     );
