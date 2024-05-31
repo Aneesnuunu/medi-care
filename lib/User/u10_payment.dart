@@ -1,11 +1,11 @@
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:medi_care/Theam/theme.dart';
 import 'package:medi_care/User/u11_payment_success.dart';
-import '../widget/choose_payment.dart';
+import '../widget/appbar.dart';
+import '../widget/u10_choose_payment.dart';
 import '../widget/u10_clinic_details.dart';
 import '../widget/u10_doctor_details.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +29,8 @@ class PaymentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => PaymentPageModel(),
-      child: _PaymentPageContent(selectedDate: selectedDate, selectedTime: selectedTime),
+      child: _PaymentPageContent(
+          selectedDate: selectedDate, selectedTime: selectedTime),
     );
   }
 }
@@ -38,8 +39,7 @@ class _PaymentPageContent extends StatefulWidget {
   final DateTime? selectedDate;
   final String? selectedTime;
 
-  const _PaymentPageContent({Key? key, this.selectedDate, this.selectedTime})
-      : super(key: key);
+  const _PaymentPageContent({this.selectedDate, this.selectedTime});
 
   @override
   State<_PaymentPageContent> createState() => _PaymentPageContentState();
@@ -50,22 +50,51 @@ class _PaymentPageContentState extends State<_PaymentPageContent> {
     if (model.selectedPaymentMethod == 'Pay at Clinic') {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
-        final appointmentRef = FirebaseFirestore.instance.collection('User')
+        final userRef = FirebaseFirestore.instance
+            .collection('User')
             .doc(currentUser.uid)
             .collection('appointments')
             .doc(); // Generate a new document ID
 
-        appointmentRef.set({
-          'date': DateFormat('yyyy-MM-dd').format(widget.selectedDate!),
+        final dateKey = DateFormat('yyyy-MM-dd').format(widget.selectedDate!);
+        final appointmentData = {
+          'date': dateKey,
           'time': widget.selectedTime,
           'dayName': DateFormat('EEEE').format(widget.selectedDate!),
-        }).then((_) {
+        };
+
+        // Update user appointment
+        userRef.set(appointmentData).then((_) async {
+          // Reference to the doctor's availability document
+          final docRef = FirebaseFirestore.instance
+              .collection('doctor_availability')
+              .doc(dateKey);
+
+          // Check if the document exists
+          final docSnapshot = await docRef.get();
+
+          if (docSnapshot.exists) {
+            // Document exists, update it
+            await docRef.update({
+              'unavailableTimeSlots': FieldValue.arrayUnion([widget.selectedTime])
+            });
+          } else {
+            // Document does not exist, create it
+            await docRef.set({
+              'unavailableTimeSlots': [widget.selectedTime]
+            });
+          }
+
+          // Navigate to PaymentSuccessPage
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const PaymentSuccessPage()),
           );
         }).catchError((error) {
-          print('Failed to update appointment details: $error');
+          // Handle errors
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to book appointment: $error')),
+          );
         });
       }
     } else {
@@ -83,18 +112,8 @@ class _PaymentPageContentState extends State<_PaymentPageContent> {
 
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(70),
-          child: AppBar(
-            title: const Text(
-              "Book in-Clinic Appointment",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+        appBar: const CustomAppBar(
+          title: "Book in-Clinic Appointment",
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -136,15 +155,18 @@ class _PaymentPageContentState extends State<_PaymentPageContent> {
                       ),
                       title: Text(
                         DateFormat('dd/MM/yyyy').format(widget.selectedDate!),
-                        style: const TextStyle(fontSize: 15, color: Colors.white),
+                        style:
+                        const TextStyle(fontSize: 15, color: Colors.white),
                       ),
                       subtitle: Text(
                         DateFormat('EEEE').format(widget.selectedDate!),
-                        style: const TextStyle(fontSize: 15, color: Colors.white),
+                        style:
+                        const TextStyle(fontSize: 15, color: Colors.white),
                       ),
                       trailing: Text(
                         widget.selectedTime ?? '',
-                        style: const TextStyle(fontSize: 15, color: Colors.white),
+                        style:
+                        const TextStyle(fontSize: 15, color: Colors.white),
                       ),
                     ),
                   ],

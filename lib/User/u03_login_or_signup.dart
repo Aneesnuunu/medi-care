@@ -132,7 +132,8 @@ import 'package:provider/provider.dart';
 import '../controller/auth_provider.dart';
 
 class LogorSign extends StatelessWidget {
-  const LogorSign({Key? key});
+  const LogorSign({super.key});
+
 
   @override
   Widget build(BuildContext context) {

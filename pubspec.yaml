@@ -56,8 +56,10 @@ dependencies:
   url_launcher: ^6.2.6
   provider: ^6.1.2
   screenshot: ^3.0.0
+#  upi_pay: ^1.0.1
 #  webview_flutter: ^4.7.0
   flutter_widget_from_html: ^0.15.0
+  intl_phone_number_input: ^0.7.4
 #  image_downloader: ^0.31.0
 
 dev_dependencies:

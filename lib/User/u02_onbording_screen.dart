@@ -112,7 +112,7 @@ class OnBoarding extends StatelessWidget {
     ),
   ];
 
-   OnBoarding({Key? key}) : super(key: key); // Added named key parameter
+   OnBoarding({super.key}); // Added named key parameter
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +135,7 @@ class OnBoarding extends StatelessWidget {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => HomePage(), // Navigate to HomePage
+              builder: (context) => const HomePage(), // Navigate to HomePage
             ),
           );
         } else {

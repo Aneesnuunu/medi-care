@@ -1,73 +1,16 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../Theam/theme.dart';
+import '../Model/d4_doctor_profile_model.dart';
+import '../widget/appbar.dart';
 import '../widget/profile_field.dart';
 
-class DoctorProfilePageModel extends ChangeNotifier {
-  final User? user = FirebaseAuth.instance.currentUser;
-  final CollectionReference doctorCollection =
-  FirebaseFirestore.instance.collection('Doctor');
-
-  String? _profileImageUrl;
-  Map<String, dynamic>? _doctorData; // Store doctor data locally
-
-  String? get profileImageUrl => _profileImageUrl;
-
-  DoctorProfilePageModel() {
-    fetchDoctorData(); // Fetch doctor data initially
-  }
-
-  Future<void> fetchDoctorData() async {
-    final docSnapshot = await doctorCollection.doc(user?.uid).get();
-    _doctorData = docSnapshot.data() as Map<String, dynamic>?;
-
-    _profileImageUrl = _doctorData?['profileImageUrl'];
-    notifyListeners();
-  }
-
-  Future<void> updateProfileField(String field, String value) async {
-    try {
-      await doctorCollection.doc(user?.uid).update({field: value});
-      // Update local doctor data
-      _doctorData?[field] = value;
-      notifyListeners(); // Notify UI of changes
-    } catch (e) {
-      print('Error updating profile field: $e');
-    }
-  }
-
-  Future<void> uploadImage(File imageFile) async {
-    if (imageFile != null) {
-      var storageInstance = FirebaseStorage.instance;
-
-      try {
-        var ref = await storageInstance
-            .ref()
-            .child("profile${user?.uid}/${imageFile.path.split('/').last}")
-            .putFile(imageFile);
-
-        var imageUrl = await ref.ref.getDownloadURL();
-        await doctorCollection
-            .doc(user?.uid)
-            .update({'profileImageUrl': imageUrl});
-        _profileImageUrl = imageUrl;
-        notifyListeners();
-      } catch (e) {
-        print('Error uploading image: $e');
-      }
-    }
-  }
-}
-
 class DoctorProfilePage extends StatelessWidget {
-  const DoctorProfilePage({Key? key}) : super(key: key);
+  const DoctorProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +23,8 @@ class DoctorProfilePage extends StatelessWidget {
 
 class _DoctorProfilePageContent extends StatefulWidget {
   @override
-  _DoctorProfilePageContentState createState() => _DoctorProfilePageContentState();
+  _DoctorProfilePageContentState createState() =>
+      _DoctorProfilePageContentState();
 }
 
 class _DoctorProfilePageContentState extends State<_DoctorProfilePageContent> {
@@ -92,16 +36,8 @@ class _DoctorProfilePageContentState extends State<_DoctorProfilePageContent> {
     final model = Provider.of<DoctorProfilePageModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppThemeData.backgroundBlack,
-        title: const Text(
-          "Doctor Profile",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppThemeData.primaryColor,
-          ),
-        ),
+      appBar: const CustomAppBar(
+        title: "Doctor Profile",
       ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
@@ -144,7 +80,7 @@ class _DoctorProfilePageContentState extends State<_DoctorProfilePageContent> {
                               setState(() {
                                 _scrollController.animateTo(
                                   _scrollController.position.maxScrollExtent,
-                                  duration: Duration(milliseconds: 500),
+                                  duration: const Duration(milliseconds: 500),
                                   curve: Curves.easeInOut,
                                 );
                               });
@@ -163,7 +99,7 @@ class _DoctorProfilePageContentState extends State<_DoctorProfilePageContent> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         Map<String, dynamic>? doctorData =
-                        snapshot.data?.data() as Map<String, dynamic>?;
+                            snapshot.data?.data() as Map<String, dynamic>?;
                         return Column(
                           children: [
                             ProfileField(

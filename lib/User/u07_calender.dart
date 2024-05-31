@@ -2,21 +2,19 @@ import 'package:calendar_flutter_aj/calender_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:medi_care/Theam/theme.dart';
 
+import '../widget/appbar.dart';
+
 class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Calendar",
-          style: TextStyle(
-              color: AppThemeData.primaryColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold),
-        ),
+      appBar: const CustomAppBar(
+        title:          "Calendar",
+
       ),
+
       body: Center(
         child: CalendarFlutterAj(
           selectedDate: (selectedDate) {

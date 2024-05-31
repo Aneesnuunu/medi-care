@@ -4,28 +4,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:medi_care/User/u13.9_prescription_image.dart';
 import '../Theam/theme.dart';
+import '../widget/appbar.dart';
 
 class MyPrescription extends StatelessWidget {
-  const MyPrescription({super.key});
+  const MyPrescription({Key? key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Prescriptions",
-          style: TextStyle(
-            color: AppThemeData.primaryColor,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar: const CustomAppBar(
+        title: "Prescriptions",
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('User')
             .doc(FirebaseAuth.instance.currentUser?.uid)
-            .collection('appointments')
+            .collection('success_appointments') // Update collection reference
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,7 +52,8 @@ class MyPrescription extends StatelessWidget {
                         ListTile(
                           leading: const Icon(Icons.event, color: Colors.white),
                           title: Text(
-                            DateFormat('yyyy-MM-dd').format(DateTime.parse(date)),
+                            DateFormat('yyyy-MM-dd')
+                                .format(DateTime.parse(date)),
                             style: const TextStyle(color: Colors.white),
                           ),
                           subtitle: Column(

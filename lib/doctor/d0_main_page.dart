@@ -8,7 +8,7 @@ import 'd1_home.dart';
 import 'd4_profile.dart';
 
 class DoctorNavigationBar extends StatelessWidget {
-  const DoctorNavigationBar({Key? key}) : super(key: key);
+  const DoctorNavigationBar({super.key});
 
   static final List<Widget> _widgetOptions = [
     const DoctorHomePage(),

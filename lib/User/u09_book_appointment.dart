@@ -1,62 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:medi_care/Theam/theme.dart';
-import 'package:medi_care/User/u10_payment.dart';
 import 'package:provider/provider.dart';
+import '../Model/u09_book_appoi_model.dart';
+import '../User/u10_payment.dart';
+import '../widget/appbar.dart';
+import '../widget/u09_build_date_container.dart';
 
-import '../widget/appoi_date_setect.dart';
-import '../widget/time_slot.dart';
-
-class BookAppointmentModel extends ChangeNotifier {
-  DateTime? selectedDate;
-  String? selectedTime;
-
-  void setDate(DateTime date) {
-    selectedDate = date;
-    notifyListeners();
-  }
-
-  void setTime(String time) {
-    selectedTime = time;
-    notifyListeners();
-  }
-}
-
-class BookAppointment extends StatelessWidget {
-  const BookAppointment({super.key});
-
+class UserAppointmentBookingPage extends StatelessWidget {
+  const UserAppointmentBookingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => BookAppointmentModel(),
-      child: _BookAppointmentContent(),
+      child: _UserAppointmentBookingContent(),
     );
   }
 }
 
-class _BookAppointmentContent extends StatefulWidget {
+class _UserAppointmentBookingContent extends StatefulWidget {
   @override
-  _BookAppointmentContentState createState() => _BookAppointmentContentState();
+  _UserAppointmentBookingContentState createState() =>
+      _UserAppointmentBookingContentState();
 }
 
-class _BookAppointmentContentState extends State<_BookAppointmentContent> {
+class _UserAppointmentBookingContentState
+    extends State<_UserAppointmentBookingContent> {
+  Future<List<String>> fetchAvailableTimeSlots(DateTime date) async {
+    final dateKey = DateFormat('yyyy-MM-dd').format(date);
+    final doc = await FirebaseFirestore.instance
+        .collection('doctor_availability')
+        .doc(dateKey)
+        .get();
+
+    //  slots from 9:00 AM to 8:00 PM with 30-minute intervals
+    List<String> allTimeSlots = [];
+    for (int i = 9; i < 20; i++) {
+      String timeSlot = DateFormat('hh:mm a').format(DateTime(0, 0, 0, i, 0));
+      allTimeSlots.add(timeSlot);
+      if (!(i == 13 || i == 17)) {
+        // Skip adding 1:30 PM and 5:30 PM
+        timeSlot = DateFormat('hh:mm a').format(DateTime(0, 0, 0, i, 30));
+        allTimeSlots.add(timeSlot);
+      }
+    }
+
+    if (doc.exists) {
+      List<dynamic> unavailable = doc['unavailableTimeSlots'];
+      return allTimeSlots.where((time) => !unavailable.contains(time)).toList();
+    } else {
+      return allTimeSlots;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final model = Provider.of<BookAppointmentModel>(context);
 
+    DateTime now = DateTime.now();
+    DateTime tomorrow = now.add(const Duration(days: 1));
+    DateTime dayAfterTomorrow = now.add(const Duration(days: 2));
+
     return SafeArea(
       child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(70),
-          child: AppBar(
-            title: const Text(
-              "Book Your Appointment",
-              style: TextStyle(
-                color: AppThemeData.primaryColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+        appBar: const PreferredSize(
+          preferredSize: Size.fromHeight(70),
+          child: CustomAppBar(
+            title: "Book Your Appointment",
           ),
         ),
         body: SingleChildScrollView(
@@ -74,12 +86,32 @@ class _BookAppointmentContentState extends State<_BookAppointmentContent> {
                     color: AppThemeData.primaryColor,
                   ),
                 ),
+
                 const SizedBox(height: 30),
-                SelectDate(
-                  onDateSelected: (date) {
-                    model.setDate(date);
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    DateContainer(date: now, model: model),
+                    DateContainer(date: tomorrow, model: model),
+                    DateContainer(date: dayAfterTomorrow, model: model),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Consumer<BookAppointmentModel>(
+                  builder: (context, model, child) {
+                    return Text(
+                      model.selectedDate != null
+                          ? '${DateFormat('EEEE').format(model.selectedDate!)}, ${DateFormat('yyyy-MM-dd').format(model.selectedDate!)}'
+                          : 'No Date Selected',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    );
                   },
                 ),
+
                 const SizedBox(height: 30),
                 const Text(
                   "Time Slot",
@@ -90,9 +122,51 @@ class _BookAppointmentContentState extends State<_BookAppointmentContent> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                TimeSlot(
-                  onTimeSelected: (time) {
-                    model.setTime(time);
+                FutureBuilder<List<String>>(
+                  future: fetchAvailableTimeSlots(model.selectedDate ?? now),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      final timeSlots = snapshot.data!;
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: timeSlots.map((time) {
+                          final isSelected = model.selectedTime == time;
+                          return GestureDetector(
+                            onTap: () {
+                              model.setTime(time);
+                            },
+                            child: Container(
+                              width: 90, // Fixed width
+                              height: 50, // Fixed height
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? Colors.white
+                                    : AppThemeData.primaryColor,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color:
+                                  isSelected ? Colors.black : Colors.white,
+                                ),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                time,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                  isSelected ? Colors.black : Colors.white,
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }
                   },
                 ),
                 const SizedBox(height: 30),
@@ -100,25 +174,20 @@ class _BookAppointmentContentState extends State<_BookAppointmentContent> {
                   height: 50,
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
-                    onPressed: () {
-                      if (model.selectedDate != null && model.selectedTime != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PaymentPage(
-                              selectedDate: model.selectedDate,
-                              selectedTime: model.selectedTime,
-                            ),
+                    onPressed:
+                    model.selectedDate != null && model.selectedTime != null
+                        ? () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PaymentPage(
+                            selectedDate: model.selectedDate!,
+                            selectedTime: model.selectedTime!,
                           ),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Please select both date and time.'),
-                          ),
-                        );
-                      }
-                    },
+                        ),
+                      );
+                    }
+                        : null,
                     style: ElevatedButton.styleFrom(
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(11)),

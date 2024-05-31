@@ -48,7 +48,8 @@ import '../controller/auth_provider.dart';
 import 'u02_onbording_screen.dart';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({Key? key});
+  const SplashScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class SplashScreen extends StatelessWidget {
       if (authProvider.isLoggedIn) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()), // Navigate to HomePage
+          MaterialPageRoute(builder: (context) => const HomePage()), // Navigate to HomePage
         );
       } else {
         Navigator.pushReplacement(

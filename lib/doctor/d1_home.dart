@@ -31,15 +31,18 @@ class DoctorHomePage extends StatelessWidget {
           },
         ),
       ),
-      drawer: DoctorDrawer(),  // Use the DoctorDrawer widget here
+      drawer: const DoctorDrawer(),  // Use the DoctorDrawer widget here
       body: ListView(
         children: [
-          Carousel(),
-          SizedBox(
+          const SizedBox(
+            height: 20,
+          ),
+             const Carousel(),
+          const SizedBox(
             height: 20,
           ),
           ListTile(
-            title: Text(
+            title: const Text(
               'My Today Appointment',
               style: TextStyle(color: Colors.white),
             ),
@@ -55,15 +58,15 @@ class DoctorHomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.0),
             ),
             contentPadding:
-            EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-            leading: Icon(Icons.calendar_today, color: Colors.white),
-            trailing: Icon(Icons.arrow_forward, color: Colors.white),
+            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+            leading: const Icon(Icons.calendar_today, color: Colors.white),
+            trailing: const Icon(Icons.arrow_forward, color: Colors.white),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           ListTile(
-            title: Text(
+            title: const Text(
               'My Tomorrow Appointment',
               style: TextStyle(color: Colors.white),
             ),
@@ -79,15 +82,15 @@ class DoctorHomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.0),
             ),
             contentPadding:
-            EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-            leading: Icon(Icons.calendar_today, color: Colors.white),
-            trailing: Icon(Icons.arrow_forward, color: Colors.white),
+            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+            leading: const Icon(Icons.calendar_today, color: Colors.white),
+            trailing: const Icon(Icons.arrow_forward, color: Colors.white),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           ListTile(
-            title: Text(
+            title: const Text(
               'Day After Tomorrow Appointment',
               style: TextStyle(color: Colors.white),
             ),
@@ -103,9 +106,9 @@ class DoctorHomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10.0),
             ),
             contentPadding:
-            EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-            leading: Icon(Icons.calendar_today, color: Colors.white),
-            trailing: Icon(Icons.arrow_forward, color: Colors.white),
+            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+            leading: const Icon(Icons.calendar_today, color: Colors.white),
+            trailing: const Icon(Icons.arrow_forward, color: Colors.white),
           ),
         ],
       ),

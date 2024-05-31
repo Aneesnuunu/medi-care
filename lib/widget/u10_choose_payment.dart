@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:medi_care/Theam/theme.dart';
 
 class ChoosePayment extends StatefulWidget {
-  const ChoosePayment({Key? key, required this.onPaymentMethodSelected})
-      : super(key: key);
+  const ChoosePayment({super.key, required this.onPaymentMethodSelected});
 
   final Function(String) onPaymentMethodSelected;
 
@@ -61,6 +60,7 @@ class _ChoosePaymentState extends State<ChoosePayment> {
             )
                 : null,
           ),
+
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Divider(

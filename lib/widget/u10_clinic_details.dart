@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:medi_care/Theam/theme.dart';
 
 class U10ClinicDetails extends StatelessWidget {
-  const U10ClinicDetails({Key? key}) : super(key: key);
+  const U10ClinicDetails({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +11,7 @@ class U10ClinicDetails extends StatelessWidget {
         color: AppThemeData.primaryColor,
         borderRadius: BorderRadius.circular(15.0), // Set border radius here
       ),
-      child: Column(
+      child: const Column(
         children: [
           SizedBox(height: 10),
           Row(

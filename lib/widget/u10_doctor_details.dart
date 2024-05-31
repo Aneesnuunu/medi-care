@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../Theam/theme.dart';
 
 class U10DoctorDetails extends StatelessWidget {
-  const U10DoctorDetails({Key? key});
+  const U10DoctorDetails({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,7 @@ class U10DoctorDetails extends StatelessWidget {
         borderRadius: BorderRadius.circular(15.0), // Set border radius here
       ),
       width: MediaQuery.of(context).size.width,
-      child: Column(
+      child: const Column(
         children: [
           Row(
             children: [

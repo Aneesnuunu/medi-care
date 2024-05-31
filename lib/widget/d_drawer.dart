@@ -4,8 +4,13 @@ import '../Theam/theme.dart';
 import '../User/u04_login_screen.dart';
 import '../User/u14_about.dart';
 import '../doctor/d4_profile.dart';
+import '../doctor/d6_leave.dart';
+import '../doctor/d7_carousel_change.dart';
+
 
 class DoctorDrawer extends StatelessWidget {
+  const DoctorDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -14,7 +19,7 @@ class DoctorDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          SizedBox(height: 150,
+          const SizedBox(height: 150,
             child: DrawerHeader(
               decoration: BoxDecoration(
                 color: AppThemeData.primaryColor,
@@ -40,8 +45,8 @@ class DoctorDrawer extends StatelessWidget {
           //   },
           // ),
           ListTile(
-            leading: Icon(Icons.person),
-            title: Text(
+            leading: const Icon(Icons.person),
+            title: const Text(
               'Profile',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
             ),
@@ -55,8 +60,8 @@ class DoctorDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text(
+            leading: const Icon(Icons.settings),
+            title: const Text(
               'About',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
             ),
@@ -71,8 +76,8 @@ class DoctorDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout),
-            title: Text(
+            leading: const Icon(Icons.logout),
+            title: const Text(
               'Logout',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
             ),
@@ -113,11 +118,11 @@ class DoctorDrawer extends StatelessWidget {
             },
 
           ),
-          SizedBox(height: 50,)
+          const SizedBox(height: 10,)
 ,
           ListTile(
-            leading: Icon(Icons.event_busy_outlined),
-            title: Text(
+            leading: const Icon(Icons.event_busy_outlined),
+            title: const Text(
               'Take a Leave',
               style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
             ),
@@ -126,7 +131,25 @@ class DoctorDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>  const AboutMePage(),
+                  builder: (context) =>   const DoctorAvailabilityManagementPage(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 10,)
+          ,
+          ListTile(
+            leading: const Icon(Icons.view_carousel),
+            title: const Text(
+              'Carousel Change',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
+            onTap: () {
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>    ImageUploadPage(),
                 ),
               );
             },

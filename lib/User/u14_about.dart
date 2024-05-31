@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../Theam/theme.dart';
+import '../widget/appbar.dart';
 
 class AboutMePage extends StatelessWidget {
   const AboutMePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "About",
-          style: TextStyle(
-              color: AppThemeData.primaryColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold),
-        ),
+    return const Scaffold(
+      appBar:CustomAppBar(
+        title:          "About",
+
+
+
+
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(

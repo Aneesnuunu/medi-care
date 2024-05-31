@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../Theam/theme.dart';
+import '../widget/appbar.dart';
 
 class FailedAppointmentsPage extends StatelessWidget {
   const FailedAppointmentsPage({super.key});
@@ -9,16 +10,15 @@ class FailedAppointmentsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Failed Appointments",
-          style: TextStyle(
-            color: AppThemeData.primaryColor,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+      appBar:const CustomAppBar(
+        title:                    "Failed Appointments",
+
+
+
+
+
       ),
+
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('User')

@@ -5,7 +5,6 @@ import 'u06_home_page.dart';
 import 'u07_calender.dart';
 import 'u08_profile.dart';
 
-// Create a class to hold the state and manage the selected index
 class NavigationProvider extends ChangeNotifier {
   int _selectedIndex = 0;
 
@@ -18,9 +17,8 @@ class NavigationProvider extends ChangeNotifier {
 }
 
 class NavigationBar123 extends StatelessWidget {
-  const NavigationBar123({Key? key}) : super(key: key);
+  const NavigationBar123({super.key});
 
-  // Define the list of widgets here
   static final List<Widget> _widgetOptions = [
     const HomePage(),
     const CalendarPage(),
@@ -55,7 +53,6 @@ class NavigationBar123 extends StatelessWidget {
               currentIndex: navigationProvider.selectedIndex,
               selectedItemColor: Colors.white,
               onTap: (index) {
-                // Call the updateIndex method to update the selected index
                 navigationProvider.updateIndex(index);
               },
             ),

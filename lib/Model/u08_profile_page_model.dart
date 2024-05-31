@@ -1,7 +1,10 @@
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+
 class ProfilePageModel extends ChangeNotifier {
   final User? user = FirebaseAuth.instance.currentUser;
   final CollectionReference usersCollection =
@@ -31,10 +34,29 @@ class ProfilePageModel extends ChangeNotifier {
       _userData?[field] = value;
       notifyListeners(); // Notify UI of changes
     } catch (e) {
-      // print("Error updating $field: $e");
+      // print('Error updating profile field: $e');
     }
   }
 
-// Add getter methods for other user fields if needed
-}
+  Future<void> uploadImage(File imageFile) async {
+    if (imageFile != null) {
+      var storageInstance = FirebaseStorage.instance;
 
+      try {
+        var ref = await storageInstance
+            .ref()
+            .child("profile${user?.uid}/${imageFile.path.split('/').last}")
+            .putFile(imageFile);
+
+        var imageUrl = await ref.ref.getDownloadURL();
+        await usersCollection
+            .doc(user?.uid)
+            .update({'profileImageUrl': imageUrl});
+        _profileImageUrl = imageUrl;
+        notifyListeners();
+      } catch (e) {
+        // print('Error uploading image: $e');
+      }
+    }
+  }
+}

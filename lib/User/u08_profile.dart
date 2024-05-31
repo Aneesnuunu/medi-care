@@ -1,73 +1,17 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-import '../Theam/theme.dart';
+import '../Model/u08_profile_page_model.dart';
+import '../widget/appbar.dart';
 import '../widget/profile_field.dart';
 
-class ProfilePageModel extends ChangeNotifier {
-  final User? user = FirebaseAuth.instance.currentUser;
-  final CollectionReference usersCollection =
-  FirebaseFirestore.instance.collection('User');
-
-  String? _profileImageUrl;
-  Map<String, dynamic>? _userData; // Store user data locally
-
-  String? get profileImageUrl => _profileImageUrl;
-
-  ProfilePageModel() {
-    fetchUserData(); // Fetch user data initially
-  }
-
-  Future<void> fetchUserData() async {
-    final docSnapshot = await usersCollection.doc(user?.uid).get();
-    _userData = docSnapshot.data() as Map<String, dynamic>?;
-
-    _profileImageUrl = _userData?['profileImageUrl'];
-    notifyListeners();
-  }
-
-  Future<void> updateProfileField(String field, String value) async {
-    try {
-      await usersCollection.doc(user?.uid).update({field: value});
-      // Update local user data
-      _userData?[field] = value;
-      notifyListeners(); // Notify UI of changes
-    } catch (e) {
-      print('Error updating profile field: $e');
-    }
-  }
-
-  Future<void> uploadImage(File imageFile) async {
-    if (imageFile != null) {
-      var storageInstance = FirebaseStorage.instance;
-
-      try {
-        var ref = await storageInstance
-            .ref()
-            .child("profile${user?.uid}/${imageFile.path.split('/').last}")
-            .putFile(imageFile);
-
-        var imageUrl = await ref.ref.getDownloadURL();
-        await usersCollection
-            .doc(user?.uid)
-            .update({'profileImageUrl': imageUrl});
-        _profileImageUrl = imageUrl;
-        notifyListeners();
-      } catch (e) {
-        print('Error uploading image: $e');
-      }
-    }
-  }
-}
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key});
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -91,16 +35,8 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
     final model = Provider.of<ProfilePageModel>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppThemeData.backgroundBlack,
-        title: const Text(
-          "Profile",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppThemeData.primaryColor,
-          ),
-        ),
+      appBar: const CustomAppBar(
+        title: "Profile",
       ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
@@ -153,7 +89,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         Map<String, dynamic>? userData =
-                        snapshot.data?.data() as Map<String, dynamic>?;
+                            snapshot.data?.data() as Map<String, dynamic>?;
                         return Column(
                           children: [
                             ProfileField(
@@ -166,7 +102,6 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                             ProfileField(
                               label: "Email Address",
                               value: userData?['email'],
-                              // Do not provide an onEdit callback for the email field
                             ),
                             ProfileField(
                               label: "Age",

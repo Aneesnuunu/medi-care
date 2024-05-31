@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:medi_care/User/u05_signin_screen.dart';
 import 'package:medi_care/User/u06.1_navigation_bar.dart';
+import 'package:medi_care/User/u5.1_pass_reset.dart';
 import '../Theam/theme.dart';
 import '../doctor/d1.1_login.dart';
 import '../widget/text_form_field.dart';
@@ -42,7 +43,9 @@ class LoginPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPassword(),));
+                      },
                       child: const Text(
                         "Forgot Password?",
                         style: TextStyle(
@@ -81,8 +84,9 @@ class LoginPage extends StatelessWidget {
                               builder: (context) => const NavigationBar123(),
                             ));
                       } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                            content: Text('Invalid email or password')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Invalid email or password')));
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -117,14 +121,15 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 100,),
-
+                const SizedBox(
+                  height: 100,
+                ),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>  DoctorLoginPage(),
+                        builder: (context) => DoctorLoginPage(),
                       ),
                     );
                   },

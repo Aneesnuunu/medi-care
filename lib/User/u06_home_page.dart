@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:medi_care/User/u09_book_appointment.dart';
+import 'package:provider/provider.dart';
 import '../Theam/theme.dart';
 import '../widget/carousel.dart';
 import '../widget/doctor_details_container_homepage.dart';
 import '../widget/u_drawer.dart';
 
-// Define a data model class to hold the state
 class HomePageModel extends ChangeNotifier {
-  // Define any state variables here
 }
 
 class HomePage extends StatelessWidget {
@@ -64,7 +62,7 @@ class HomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const BookAppointment(),
+                        builder: (context) =>  const UserAppointmentBookingPage(),
                       ),
                     );
                   },
