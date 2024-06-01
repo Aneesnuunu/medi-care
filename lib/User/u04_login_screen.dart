@@ -34,7 +34,7 @@ class LoginPage extends StatelessWidget {
                   hintText: 'Email Address',
                   prefixIcon: Icons.email_outlined,
                 ),
-                CustomTextFormField(
+                CustomTextFormFieldPassword(
                   controller: passwordController,
                   hintText: 'Password',
                   prefixIcon: Icons.lock_outline,

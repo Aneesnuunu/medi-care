@@ -6,6 +6,7 @@ import '../User/u14_about.dart';
 import '../doctor/d4_profile.dart';
 import '../doctor/d6_leave.dart';
 import '../doctor/d7_carousel_change.dart';
+import '../doctor/d8_my_patients.dart';
 
 
 class DoctorDrawer extends StatelessWidget {
@@ -150,6 +151,24 @@ class DoctorDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>    ImageUploadPage(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 10,)
+          ,
+          ListTile(
+            leading: const Icon(Icons.groups),
+            title: const Text(
+              'My Patients',
+              style: TextStyle(color: AppThemeData.primaryColor, fontSize: 22),
+            ),
+            onTap: () {
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>    UserListPage(),
                 ),
               );
             },
