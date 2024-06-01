@@ -255,7 +255,7 @@ class CustomTextFormFieldPhone extends StatelessWidget {
 
           ),
           inputFormatters: [
-            LengthLimitingTextInputFormatter(10), // Limit to 10 characters
+            LengthLimitingTextInputFormatter(13), // Limit to 10 characters
             FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Allow only numbers
           ],
           validator: (value) {
