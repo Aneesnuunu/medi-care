@@ -60,6 +60,8 @@ dependencies:
 #  webview_flutter: ^4.7.0
   flutter_widget_from_html: ^0.15.0
   intl_phone_number_input: ^0.7.4
+  crystal_navigation_bar: ^1.0.0
+  iconly: ^1.0.1
 #  image_downloader: ^0.31.0
 
 dev_dependencies:

@@ -1,14 +1,13 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:medi_care/User/u06.1_navigation_bar.dart';
 import 'package:provider/provider.dart';
-
 import '../Model/u08_profile_page_model.dart';
 import '../widget/appbar.dart';
 import '../widget/profile_field.dart';
-
+import 'u06.1_navigationbar.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -35,8 +34,14 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
     final model = Provider.of<ProfilePageModel>(context);
 
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: CustomAppBar(
         title: "Profile",
+        onBackButtonPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainHome()),
+          );
+        },
       ),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
@@ -50,9 +55,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
               ),
               child: Column(
                 children: [
-                  const SizedBox(
-                    height: 40,
-                  ),
+                  const SizedBox(height: 40),
                   Stack(
                     children: [
                       Center(
@@ -62,18 +65,25 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                           backgroundImage: model.profileImageUrl != null
                               ? NetworkImage(model.profileImageUrl!)
                               : null,
+                          child: model.isLoading
+                              ? CircularProgressIndicator()
+                              : null,
                         ),
                       ),
                       Positioned(
                         bottom: 0,
                         right: 0,
                         child: IconButton(
-                          onPressed: () async {
+                          onPressed: model.isLoading
+                              ? null
+                              : () async {
                             var img = await _imagePicker.pickImage(
                                 source: ImageSource.gallery);
                             if (img != null) {
                               File imageFile = File(img.path);
-                              model.uploadImage(imageFile);
+                              model.setLoading(true);
+                              await model.uploadImage(imageFile);
+                              model.setLoading(false);
                             }
                           },
                           icon: const Icon(Icons.camera),
@@ -81,15 +91,13 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 40,
-                  ),
+                  const SizedBox(height: 40),
                   FutureBuilder<DocumentSnapshot>(
                     future: model.usersCollection.doc(model.user?.uid).get(),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         Map<String, dynamic>? userData =
-                            snapshot.data?.data() as Map<String, dynamic>?;
+                        snapshot.data?.data() as Map<String, dynamic>?;
                         return Column(
                           children: [
                             ProfileField(
@@ -154,9 +162,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                       }
                     },
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),

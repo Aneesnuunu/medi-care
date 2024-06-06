@@ -3,18 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:medi_care/User/u05_signin_screen.dart';
 import 'package:medi_care/User/u06.1_navigation_bar.dart';
 import 'package:medi_care/User/u5.1_pass_reset.dart';
+import 'package:provider/provider.dart';
 import '../Theam/theme.dart';
 import '../doctor/d1.1_login.dart';
+import '../provider/login.dart';
 import '../widget/text_form_field.dart';
+import 'u06.1_navigationbar.dart';
 
 class LoginPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  LoginPage({super.key});
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final loginProvider = Provider.of<LoginProvider>(context); // Access the LoginProvider
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
@@ -23,19 +25,20 @@ class LoginPage extends StatelessWidget {
           padding: const EdgeInsets.only(left: 11, right: 10),
           child: Container(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
             child: Column(
               children: [
                 const SizedBox(
                   height: 300,
                 ),
                 CustomTextFormField(
-                  controller: emailController,
+                  controller: loginProvider.emailController,
                   hintText: 'Email Address',
                   prefixIcon: Icons.email_outlined,
                 ),
                 CustomTextFormFieldPassword(
-                  controller: passwordController,
+                  controller: loginProvider.passwordController,
                   hintText: 'Password',
                   prefixIcon: Icons.lock_outline,
                 ),
@@ -44,7 +47,12 @@ class LoginPage extends StatelessWidget {
                   children: [
                     TextButton(
                       onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ForgotPassword(),));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ForgotPassword(),
+                          ),
+                        );
                       },
                       child: const Text(
                         "Forgot Password?",
@@ -64,37 +72,42 @@ class LoginPage extends StatelessWidget {
                   width: MediaQuery.of(context).size.width,
                   height: 50,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      final authenticationInstance = FirebaseAuth.instance;
+                    onPressed: loginProvider.isLoading ? null : () async {
+                      loginProvider.setIsLoading(true); // Set loading state
 
                       try {
-                        final ref = await authenticationInstance
-                            .signInWithEmailAndPassword(
-                                email: emailController.text,
-                                password: passwordController.text);
+                        await loginProvider.signInWithEmailAndPassword();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Logged in successfully'),
-                            duration: Duration(seconds: 2), //  set duration
+                            duration: Duration(seconds: 2),
                           ),
                         );
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const NavigationBar123(),
-                            ));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MainHome(),
+                          ),
+                        );
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Invalid email or password')));
+                          const SnackBar(
+                            content: Text('Invalid email or password'),
+                          ),
+                        );
+                      } finally {
+                        loginProvider.setIsLoading(false); // Reset loading state
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(11))),
+                        borderRadius: BorderRadius.all(Radius.circular(11)),
+                      ),
                       backgroundColor: AppThemeData.primaryColor,
                     ),
-                    child: const Text(
+                    child: loginProvider.isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
                       "LOG IN",
                       style: TextStyle(color: Colors.white),
                     ),
@@ -129,7 +142,7 @@ class LoginPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DoctorLoginPage(),
+                        builder: (context) =>  DoctorLoginPage(),
                       ),
                     );
                   },

@@ -3,6 +3,8 @@ import 'package:lottie/lottie.dart';
 import 'package:medi_care/Theam/theme.dart';
 import 'package:medi_care/User/u06.1_navigation_bar.dart';
 
+import 'u06.1_navigationbar.dart';
+
 class PaymentSuccessPage extends StatelessWidget {
   const PaymentSuccessPage({super.key});
 
@@ -39,7 +41,7 @@ class PaymentSuccessPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const NavigationBar123(),
+                      builder: (context) => const MainHome(),
                     ),
                   );
                 },

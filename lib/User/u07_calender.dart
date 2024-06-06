@@ -1,8 +1,9 @@
 import 'package:calendar_flutter_aj/calender_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:medi_care/Theam/theme.dart';
-
+import 'package:medi_care/User/u06.1_navigation_bar.dart';
 import '../widget/appbar.dart';
+import 'u06.1_navigationbar.dart';
 
 class CalendarPage extends StatelessWidget {
   const CalendarPage({super.key});
@@ -10,11 +11,15 @@ class CalendarPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        title:          "Calendar",
-
+      appBar: CustomAppBar(
+        title: "Calendar",
+        onBackButtonPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainHome()), // Navigate to HomePage
+          );
+        },
       ),
-
       body: Center(
         child: CalendarFlutterAj(
           selectedDate: (selectedDate) {

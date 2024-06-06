@@ -46,10 +46,16 @@ class _PaymentPageContent extends StatefulWidget {
 }
 
 class _PaymentPageContentState extends State<_PaymentPageContent> {
-  void _confirmClinicVisit(PaymentPageModel model) {
+  bool _isLoading = false;
+
+  void _confirmClinicVisit(PaymentPageModel model) async {
     if (model.selectedPaymentMethod == 'Pay at Clinic') {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
+        setState(() {
+          _isLoading = true;
+        });
+
         final userRef = FirebaseFirestore.instance
             .collection('User')
             .doc(currentUser.uid)
@@ -63,8 +69,10 @@ class _PaymentPageContentState extends State<_PaymentPageContent> {
           'dayName': DateFormat('EEEE').format(widget.selectedDate!),
         };
 
-        // Update user appointment
-        userRef.set(appointmentData).then((_) async {
+        try {
+          // Update user appointment
+          await userRef.set(appointmentData);
+
           // Reference to the doctor's availability document
           final docRef = FirebaseFirestore.instance
               .collection('doctor_availability')
@@ -90,12 +98,16 @@ class _PaymentPageContentState extends State<_PaymentPageContent> {
             context,
             MaterialPageRoute(builder: (context) => const PaymentSuccessPage()),
           );
-        }).catchError((error) {
+        } catch (error) {
           // Handle errors
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to book appointment: $error')),
           );
-        });
+        } finally {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -191,13 +203,15 @@ class _PaymentPageContentState extends State<_PaymentPageContent> {
                 width: MediaQuery.of(context).size.width,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () => _confirmClinicVisit(model),
+                  onPressed: _isLoading ? null : () => _confirmClinicVisit(model),
                   style: ElevatedButton.styleFrom(
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(11))),
                     backgroundColor: AppThemeData.primaryColor,
                   ),
-                  child: const Text(
+                  child: _isLoading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
                     "Confirm Clinic Visit",
                     style: TextStyle(
                         color: Colors.white,

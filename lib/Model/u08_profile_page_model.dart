@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -11,12 +10,15 @@ class ProfilePageModel extends ChangeNotifier {
   FirebaseFirestore.instance.collection('User');
 
   String? _profileImageUrl;
-  Map<String, dynamic>? _userData; // Store user data locally
+  Map<String, dynamic>? _userData;
+  bool _isLoading = false;
 
   String? get profileImageUrl => _profileImageUrl;
+  Map<String, dynamic>? get userData => _userData;
+  bool get isLoading => _isLoading;
 
   ProfilePageModel() {
-    fetchUserData(); // Fetch user data initially
+    fetchUserData();
   }
 
   Future<void> fetchUserData() async {
@@ -27,12 +29,16 @@ class ProfilePageModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setLoading(bool loading) {
+    _isLoading = loading;
+    notifyListeners();
+  }
+
   Future<void> updateProfileField(String field, String value) async {
     try {
       await usersCollection.doc(user?.uid).update({field: value});
-      // Update local user data
       _userData?[field] = value;
-      notifyListeners(); // Notify UI of changes
+      notifyListeners();
     } catch (e) {
       // print('Error updating profile field: $e');
     }
