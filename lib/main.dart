@@ -5,7 +5,6 @@ import 'package:medi_care/provider/appointment_provider.dart';
 import 'package:medi_care/provider/d6_leave_model.dart';
 import 'package:medi_care/provider/d7_model.dart';
 import 'package:medi_care/provider/login.dart';
-import 'package:medi_care/provider/payment_provider.dart';
 import 'package:medi_care/provider/prescrioptionsheet.dart';
 import 'package:medi_care/provider/u06.1_provider.dart';
 import 'package:provider/provider.dart';
