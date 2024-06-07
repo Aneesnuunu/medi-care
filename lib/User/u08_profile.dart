@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:medi_care/User/u06.1_navigation_bar.dart';
 import 'package:provider/provider.dart';
 import '../Model/u08_profile_page_model.dart';
 import '../widget/appbar.dart';
@@ -66,7 +65,7 @@ class _ProfilePageContentState extends State<_ProfilePageContent> {
                               ? NetworkImage(model.profileImageUrl!)
                               : null,
                           child: model.isLoading
-                              ? CircularProgressIndicator()
+                              ? const CircularProgressIndicator()
                               : null,
                         ),
                       ),

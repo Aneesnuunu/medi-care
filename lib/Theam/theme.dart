@@ -97,6 +97,6 @@ class AppThemeData {
           fontWeight: FontWeight.w500,
           color: AppThemeData.textWhite),
     ),
-    colorScheme: const ColorScheme.dark().copyWith(background: backgroundBlack),
+    colorScheme: const ColorScheme.dark().copyWith(surface: backgroundBlack),
   );
 }

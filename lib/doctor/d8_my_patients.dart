@@ -46,7 +46,7 @@ class UserListPage extends StatelessWidget {
                     leading: CircleAvatar(
                       backgroundImage: profileImageUrl != null
                           ? NetworkImage(profileImageUrl)
-                          : AssetImage('assets/Images/img_4.png') as ImageProvider,
+                          : const AssetImage('assets/Images/img_4.png') as ImageProvider,
                     ),
                     title: Text(
                       name,

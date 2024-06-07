@@ -24,7 +24,7 @@ class MainHome extends StatelessWidget {
               builder: (context, provider, child) {
                 return IndexedStack(
                   index: provider.selectedIndex,
-                  children: [
+                  children: const [
                     HomePage(),
                     CalendarPage(),
                     ProfilePage(),

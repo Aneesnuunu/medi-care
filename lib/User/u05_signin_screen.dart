@@ -185,7 +185,7 @@ class _SiginPageState extends State<SiginPage> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => LoginPage(),
+                                      builder: (context) => const LoginPage(),
                                     ));
                               } catch (e) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -221,7 +221,7 @@ class _SiginPageState extends State<SiginPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginPage(),
+                          builder: (context) => const LoginPage(),
                         ),
                       );
                     },

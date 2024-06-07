@@ -152,7 +152,8 @@ import '../provider/d6_leave_model.dart';
 import '../widget/appbar.dart';
 
 class DoctorAvailabilityManagementPage extends StatelessWidget {
-  const DoctorAvailabilityManagementPage({Key? key}) : super(key: key);
+  const DoctorAvailabilityManagementPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {

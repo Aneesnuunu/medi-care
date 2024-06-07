@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:medi_care/User/u05_signin_screen.dart';
-import 'package:medi_care/User/u06.1_navigation_bar.dart';
 import 'package:medi_care/User/u5.1_pass_reset.dart';
 import 'package:provider/provider.dart';
 import '../Theam/theme.dart';
@@ -11,7 +9,8 @@ import '../widget/text_form_field.dart';
 import 'u06.1_navigationbar.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {

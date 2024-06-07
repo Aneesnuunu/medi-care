@@ -8,10 +8,10 @@ class DateContainer extends StatelessWidget {
   final BookAppointmentModel model;
 
   const DateContainer({
-    Key? key,
+    super.key,
     required this.date,
     required this.model,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

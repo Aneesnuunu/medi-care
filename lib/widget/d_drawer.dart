@@ -112,7 +112,7 @@ class DoctorDrawer extends StatelessWidget {
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginPage()),
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
                       (route) => false,
                 );
               }

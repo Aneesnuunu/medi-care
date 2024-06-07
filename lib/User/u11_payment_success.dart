@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:medi_care/Theam/theme.dart';
-import 'package:medi_care/User/u06.1_navigation_bar.dart';
-
 import 'u06.1_navigationbar.dart';
 
 class PaymentSuccessPage extends StatelessWidget {

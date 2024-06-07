@@ -20,14 +20,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     final String email = _emailController.text.trim();
     if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter your email')),
+        const SnackBar(content: Text('Please enter your email')),
       );
       return;
     }
     try {
       await _auth.sendPasswordResetEmail(email: email);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password reset email sent')),
+        const SnackBar(content: Text('Password reset email sent')),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -51,7 +51,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               controller: _emailController,
               hintText: 'Enter your email',
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             SizedBox(
               width: MediaQuery.of(context).size.width,
               height: 50,
@@ -62,7 +62,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   backgroundColor: AppThemeData.primaryColor,
                 ),
                 onPressed: _sendPasswordResetEmail,
-                child: Text(
+                child: const Text(
                   '  Reset ',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),

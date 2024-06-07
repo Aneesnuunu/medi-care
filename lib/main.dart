@@ -11,12 +11,9 @@ import 'package:provider/provider.dart';
 import 'Model/d4_doctor_profile_model.dart';
 import 'Model/u08_profile_page_model.dart';
 import 'Model/u_payment_page_model.dart';
-import 'User/u04_login_screen.dart';
 import 'controller/auth_provider.dart';
 import 'Theam/theme.dart';
 import 'User/u01_splash_screen.dart';
-import 'doctor/d1.1_login.dart';
-import 'doctor/d4_profile.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -36,38 +33,26 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => AppointmentsProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider()),
-        ChangeNotifierProvider(create: (_) =>ProfilePageModel ()),
+        ChangeNotifierProvider(create: (_) => ProfilePageModel()),
         ChangeNotifierProvider(create: (_) => PaymentPageModel()),
         ChangeNotifierProvider(create: (_) => PrescriptionModel()),
         ChangeNotifierProvider(create: (_) => DoctorProfilePageModel()),
         ChangeNotifierProvider(create: (_) => DoctorAvailabilityModel()),
         ChangeNotifierProvider(create: (_) => ImageUploadModel()),
         ChangeNotifierProvider(create: (_) => TabProvider()),
-
-
-
-
-
-
-
-
-
-
-
-
-
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           scaffoldBackgroundColor: AppThemeData.backgroundBlack,
-          appBarTheme: const AppBarTheme(backgroundColor: AppThemeData.backgroundBlack),
+          appBarTheme:
+              const AppBarTheme(backgroundColor: AppThemeData.backgroundBlack),
           textTheme: GoogleFonts.latoTextTheme(Theme.of(context).textTheme),
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: LoginPage(), // SplashScreen will navigate based on login state
+        home: const SplashScreen(),
       ),
     );
   }
