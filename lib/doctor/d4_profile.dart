@@ -75,15 +75,13 @@ class _DoctorProfilePageContentState extends State<_DoctorProfilePageContent> {
                                 source: ImageSource.gallery);
                             if (img != null) {
                               File imageFile = File(img.path);
-                              model.uploadImage(imageFile);
+                              await model.uploadImage(imageFile);
                               // Scroll down after uploading image
-                              setState(() {
-                                _scrollController.animateTo(
-                                  _scrollController.position.maxScrollExtent,
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Curves.easeInOut,
-                                );
-                              });
+                              _scrollController.animateTo(
+                                _scrollController.position.maxScrollExtent,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                              );
                             }
                           },
                           icon: const Icon(Icons.camera),
@@ -99,7 +97,7 @@ class _DoctorProfilePageContentState extends State<_DoctorProfilePageContent> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         Map<String, dynamic>? doctorData =
-                            snapshot.data?.data() as Map<String, dynamic>?;
+                        snapshot.data?.data() as Map<String, dynamic>?;
                         return Column(
                           children: [
                             ProfileField(

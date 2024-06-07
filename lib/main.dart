@@ -2,9 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:medi_care/provider/appointment_provider.dart';
+import 'package:medi_care/provider/d6_leave_model.dart';
+import 'package:medi_care/provider/d7_model.dart';
 import 'package:medi_care/provider/login.dart';
+import 'package:medi_care/provider/payment_provider.dart';
+import 'package:medi_care/provider/prescrioptionsheet.dart';
+import 'package:medi_care/provider/u06.1_provider.dart';
 import 'package:provider/provider.dart';
+import 'Model/d4_doctor_profile_model.dart';
 import 'Model/u08_profile_page_model.dart';
+import 'Model/u_payment_page_model.dart';
 import 'User/u04_login_screen.dart';
 import 'controller/auth_provider.dart';
 import 'Theam/theme.dart';
@@ -31,6 +38,20 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AppointmentsProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) =>ProfilePageModel ()),
+        ChangeNotifierProvider(create: (_) => PaymentPageModel()),
+        ChangeNotifierProvider(create: (_) => PrescriptionModel()),
+        ChangeNotifierProvider(create: (_) => DoctorProfilePageModel()),
+        ChangeNotifierProvider(create: (_) => DoctorAvailabilityModel()),
+        ChangeNotifierProvider(create: (_) => ImageUploadModel()),
+        ChangeNotifierProvider(create: (_) => TabProvider()),
+
+
+
+
+
+
+
+
 
 
 

@@ -1,21 +1,17 @@
-
 import 'package:flutter/material.dart';
 import 'package:medi_care/Theam/theme.dart';
+import 'package:provider/provider.dart';
+import '../Model/u_payment_page_model.dart';
 
-class ChoosePayment extends StatefulWidget {
+class ChoosePayment extends StatelessWidget {
   const ChoosePayment({super.key, required this.onPaymentMethodSelected});
 
   final Function(String) onPaymentMethodSelected;
 
   @override
-  State<ChoosePayment> createState() => _ChoosePaymentState();
-}
-
-class _ChoosePaymentState extends State<ChoosePayment> {
-  String? selectedPaymentMethod;
-
-  @override
   Widget build(BuildContext context) {
+    final model = Provider.of<PaymentPageModel>(context);
+
     return Container(
       decoration: BoxDecoration(
         color: AppThemeData.primaryColor,
@@ -37,10 +33,8 @@ class _ChoosePaymentState extends State<ChoosePayment> {
           ),
           ListTile(
             onTap: () {
-              setState(() {
-                selectedPaymentMethod = 'Pay Online';
-                widget.onPaymentMethodSelected(selectedPaymentMethod!);
-              });
+              model.setSelectedPaymentMethod('Pay Online');
+              onPaymentMethodSelected('Pay Online');
             },
             leading: const Icon(
               Icons.payment,
@@ -53,14 +47,13 @@ class _ChoosePaymentState extends State<ChoosePayment> {
                 color: Colors.white,
               ),
             ),
-            trailing: selectedPaymentMethod == 'Pay Online'
+            trailing: model.selectedPaymentMethod == 'Pay Online'
                 ? const Icon(
               Icons.check,
               color: Colors.white,
             )
                 : null,
           ),
-
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Divider(
@@ -70,10 +63,8 @@ class _ChoosePaymentState extends State<ChoosePayment> {
           ),
           ListTile(
             onTap: () {
-              setState(() {
-                selectedPaymentMethod = 'Pay at Clinic';
-                widget.onPaymentMethodSelected(selectedPaymentMethod!);
-              });
+              model.setSelectedPaymentMethod('Pay at Clinic');
+              onPaymentMethodSelected('Pay at Clinic');
             },
             leading: const Icon(
               Icons.store,
@@ -86,7 +77,7 @@ class _ChoosePaymentState extends State<ChoosePayment> {
                 color: Colors.white,
               ),
             ),
-            trailing: selectedPaymentMethod == 'Pay at Clinic'
+            trailing: model.selectedPaymentMethod == 'Pay at Clinic'
                 ? const Icon(
               Icons.check,
               color: Colors.white,
@@ -98,4 +89,3 @@ class _ChoosePaymentState extends State<ChoosePayment> {
     );
   }
 }
-

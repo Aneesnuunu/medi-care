@@ -34,7 +34,7 @@ class DoctorProfilePageModel extends ChangeNotifier {
       _doctorData?[field] = value;
       notifyListeners(); // Notify UI of changes
     } catch (e) {
-      // print('Error updating profile field: $e');
+      // Handle error
     }
   }
 
@@ -55,7 +55,7 @@ class DoctorProfilePageModel extends ChangeNotifier {
         _profileImageUrl = imageUrl;
         notifyListeners();
       } catch (e) {
-        // print('Error uploading image: $e');
+        // Handle error
       }
     }
   }

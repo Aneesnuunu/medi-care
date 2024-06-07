@@ -1,12 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:provider/provider.dart';
 import '../Theam/theme.dart';
+import '../provider/prescrioptionsheet.dart';
 import 'd2_today_appointment.dart';
 
-class PrescriptionSheet extends StatefulWidget {
+class PrescriptionSheet extends StatelessWidget {
   final String name;
   final String age;
   final String place;
@@ -25,15 +26,48 @@ class PrescriptionSheet extends StatefulWidget {
   });
 
   @override
-  State<PrescriptionSheet> createState() => _PrescriptionSheetState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => PrescriptionModel(),
+      child: PrescriptionSheetContent(
+        name: name,
+        age: age,
+        place: place,
+        date: date,
+        appointmentId: appointmentId,
+        userId: userId,
+      ),
+    );
+  }
 }
 
-class _PrescriptionSheetState extends State<PrescriptionSheet> {
+class PrescriptionSheetContent extends StatefulWidget {
+  final String name;
+  final String age;
+  final String place;
+  final String date;
+  final String appointmentId;
+  final String userId; // Add the userId parameter
+
+  const PrescriptionSheetContent({
+    super.key,
+    required this.name,
+    required this.age,
+    required this.place,
+    required this.date,
+    required this.appointmentId,
+    required this.userId, // Initialize the userId parameter
+  });
+
+  @override
+  State<PrescriptionSheetContent> createState() => _PrescriptionSheetContentState();
+}
+
+class _PrescriptionSheetContentState extends State<PrescriptionSheetContent> {
   late TextEditingController nameController;
   late TextEditingController ageController;
   late TextEditingController placeController;
   late TextEditingController dateController;
-  bool _isUploading = false; // Add this variable to track uploading state
 
   ScreenshotController screenshotController = ScreenshotController();
 
@@ -56,10 +90,8 @@ class _PrescriptionSheetState extends State<PrescriptionSheet> {
     super.dispose();
   }
 
-  Future<void> _captureAndUploadScreenshot() async {
-    setState(() {
-      _isUploading = true;
-    });
+  Future<void> _captureAndUploadScreenshot(PrescriptionModel model) async {
+    model.setUploading(true);
 
     try {
       // Capture the screenshot
@@ -121,9 +153,7 @@ class _PrescriptionSheetState extends State<PrescriptionSheet> {
         SnackBar(content: Text('Failed to store screenshot: $e')),
       );
     } finally {
-      setState(() {
-        _isUploading = false;
-      });
+      model.setUploading(false);
     }
   }
 
@@ -177,7 +207,7 @@ class _PrescriptionSheetState extends State<PrescriptionSheet> {
                                   Text(
                                     'M.B.B.S , M.D',
                                     style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               )
@@ -279,37 +309,44 @@ class _PrescriptionSheetState extends State<PrescriptionSheet> {
           ),
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
-            child: _isUploading
-                ? const Center(child: CircularProgressIndicator()) // Show circular loading indicator when uploading
-                : SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () async {
-                  await _captureAndUploadScreenshot(); // Wait for the screenshot upload process to complete
-                  await Future.delayed(const Duration(seconds: 2)); // Delay for 2 seconds
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DoctorAppointmentsPage(context: context,), // Navigate to DoctorAppointmentsPage
+            child: Consumer<PrescriptionModel>(
+              builder: (context, model, child) {
+                return model.isUploading
+                    ? const Center(child: CircularProgressIndicator())
+                    : SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await _captureAndUploadScreenshot(model);
+                      await Future.delayed(
+                          const Duration(seconds: 2)); // Delay for 2 seconds
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DoctorAppointmentsPage(
+                            context: context,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      backgroundColor: AppThemeData.primaryColor,
                     ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(11),
+                    child: const Text(
+                      "Stop Consultation",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  backgroundColor: AppThemeData.primaryColor,
-                ),
-                child: const Text(
-                  "Stop Consultation",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ),

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,13 +12,16 @@ import '../widget/u10_doctor_details.dart';
 import 'package:provider/provider.dart';
 
 class PaymentPageModel extends ChangeNotifier {
-  String? selectedPaymentMethod;
+  String? _selectedPaymentMethod;
+
+  String? get selectedPaymentMethod => _selectedPaymentMethod;
 
   void setSelectedPaymentMethod(String paymentMethod) {
-    selectedPaymentMethod = paymentMethod;
+    _selectedPaymentMethod = paymentMethod;
     notifyListeners();
   }
 }
+
 
 class PaymentPage extends StatelessWidget {
   final DateTime? selectedDate;
