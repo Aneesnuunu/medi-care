@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Theam/theme.dart';
 import '../User/u04_login_screen.dart';
 import '../User/u08_profile.dart';
@@ -132,8 +133,7 @@ class CustomDrawer extends StatelessWidget {
                     backgroundColor: AppThemeData.backgroundBlack,
                     title: const Text('Logout Confirmation',
                         style: TextStyle(color: Colors.white)),
-                    content: const Text(
-                        'Are you sure you want to logout?',
+                    content: const Text('Are you sure you want to logout?',
                         style: TextStyle(color: Colors.white)),
                     actions: <Widget>[
                       TextButton(
@@ -156,11 +156,18 @@ class CustomDrawer extends StatelessWidget {
               );
 
               if (shouldLogout == true) {
+                // Clear authentication token from SharedPreferences
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove('auth_token');
+
+                // Sign out the user from Firebase Authentication
                 await FirebaseAuth.instance.signOut();
+
+                // Navigate to the LoginPage
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) =>  const LoginPage()),
-                      (route) => false,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  (route) => false,
                 );
               }
             },

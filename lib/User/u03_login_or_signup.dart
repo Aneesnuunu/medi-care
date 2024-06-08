@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:medi_care/Theam/theme.dart';
-import 'package:medi_care/User/u02_onbording_screen.dart';
 import 'package:medi_care/User/u04_login_screen.dart';
 import 'package:medi_care/User/u05_signin_screen.dart';
-import 'package:provider/provider.dart';
-import '../controller/auth_provider.dart';
+
 
 class LogorSign extends StatelessWidget {
   const LogorSign({super.key});
@@ -15,7 +13,6 @@ class LogorSign extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -82,21 +79,13 @@ class LogorSign extends StatelessWidget {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    if (authProvider.onboardingCompleted) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const LoginPage(),
                         ),
                       );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OnBoarding(),
-                        ),
-                      );
-                    }
+
                   },
                   style: ElevatedButton.styleFrom(
                     shape: const RoundedRectangleBorder(),

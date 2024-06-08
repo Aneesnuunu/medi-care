@@ -44,7 +44,6 @@ class OnBoarding extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return IntroScreenOnboarding(
@@ -58,22 +57,14 @@ class OnBoarding extends StatelessWidget {
         );
       }).toList(),
       onTapSkipButton: () {
-        authProvider.setOnboardingCompleted(); // Update onboarding completion status
-        if (authProvider.isLoggedIn) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(), // Navigate to HomePage
-            ),
-          );
-        } else {
+
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => const LogorSign(), // Navigate to Login/Signup screen
             ),
           );
-        }
+
       },
       backgroudColor: Colors.white,
     );
