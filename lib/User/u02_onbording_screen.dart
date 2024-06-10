@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intro_screen_onboarding_flutter/intro_app.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:medi_care/User/u06_home_page.dart';
-import 'package:provider/provider.dart';
 import 'u03_login_or_signup.dart';
-import '../controller/auth_provider.dart';
 
 class OnBoarding extends StatelessWidget {
   final List<Introduction> list = [

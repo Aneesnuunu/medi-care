@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:medi_care/Theam/theme.dart';
 import 'package:medi_care/widget/text_form_field.dart';
 import '../Model/d_login_model.dart';
+import 'd1.2_sigin.dart';
 
 class DoctorLoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -81,24 +82,24 @@ class DoctorLoginPage extends StatelessWidget {
                   const SizedBox(
                     height: 30,
                   ),
-                  // TextButton(
-                  //   onPressed: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) => DoctorSiginPage(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: const Text(
-                  //     "Doctor register",
-                  //     style: TextStyle(
-                  //       fontWeight: FontWeight.bold,
-                  //       color: AppThemeData.primaryColor,
-                  //       fontSize: 17,
-                  //     ),
-                  //   ),
-                  // ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DoctorSiginPage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Doctor register",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: AppThemeData.primaryColor,
+                        fontSize: 17,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

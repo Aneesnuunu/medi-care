@@ -9,7 +9,7 @@ import '../widget/appbar.dart';
 import '../widget/u09_build_date_container.dart';
 
 class UserAppointmentBookingPage extends StatelessWidget {
-  const UserAppointmentBookingPage({super.key});
+  const   UserAppointmentBookingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +128,7 @@ class _UserAppointmentBookingContentState
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
+                      return Text('Error: ${snapshot.error}',style: const TextStyle(color: Colors.white),);
                     } else {
                       final timeSlots = snapshot.data!;
                       return Wrap(

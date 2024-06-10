@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'Model/d4_doctor_profile_model.dart';
 import 'Model/u08_profile_page_model.dart';
 import 'Model/u_payment_page_model.dart';
-import 'controller/auth_provider.dart';
 import 'Theam/theme.dart';
 import 'User/u01_splash_screen.dart';
 import 'firebase_options.dart';
